@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///home/fitsum/smart_shoring_suite_frontend-1/app/(dashboard)/dashboard/page.tsx"],"sourcesContent":["export default function DashboardPage() {\n  return (\n    <div className=\"flex h-full min-h-[60vh] items-center justify-center rounded-xl border border-dashed border-gray-300 text-sm text-gray-400\">\n      Dashboard content goes here\n    </div>\n  );\n}\n"],"names":["DashboardPage","className"],"mappings":";;;;;;AAAe,SAASA;IACtB,qBACE,8OAAC;QAAIC,WAAU;kBAA6H;;;;;;AAIhJ"}},
+    {"offset": {"line": 37, "column": 0}, "map": {"version":3,"sources":["file:///home/fitsum/smart_shoring_suite_frontend-1/app/favicon.ico.mjs%20(structured%20image%20object)"],"sourcesContent":["import src from \"IMAGE\";\nexport default { src, width: 256, height: 256 }\n"],"names":["src","width","height"],"mappings":";;;;AAAA;;uCACe;IAAEA,KAAAA,mIAAG;IAAEC,OAAO;IAAKC,QAAQ;AAAI"}}]
+}
