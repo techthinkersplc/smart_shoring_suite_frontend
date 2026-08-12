@@ -46,3 +46,4 @@
 {"timestamp":"00:15:18.779","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
 {"timestamp":"00:15:18.908","source":"Browser","level":"WARN","message":"Image with src \"/image/Duto.jpg\" has \"fill\" but is missing \"sizes\" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes"}
 {"timestamp":"00:15:18.908","source":"Server","level":"WARN","message":"[browser] \"\\u001b[33mImage with src \\\"/image/Duto.jpg\\\" has \\\"fill\\\" but is missing \\\"sizes\\\" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes\\u001b[39m\""}
+{"timestamp":"00:17:50.525","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
