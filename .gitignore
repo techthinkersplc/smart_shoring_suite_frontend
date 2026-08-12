@@ -1,0 +1,22 @@
+# Dependencies (never commit external packages)
+node_modules/
+vendor/
+
+# Environment variables & secrets (CRITICAL for security)
+.env
+.env.local
+*.pem
+
+# Build outputs & compiled code
+dist/
+build/
+*.exe
+*.o
+
+# OS-generated metadata files
+.DS_Store
+Thumbs.db
+
+# IDE & Editor specific settings
+.vscode/
+.idea/
