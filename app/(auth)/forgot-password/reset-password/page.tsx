@@ -28,6 +28,7 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSucceeded, setHasSucceeded] = useState(false);
   const resetToken = useSyncExternalStore(
     subscribeToResetToken,
     getResetTokenSnapshot,
@@ -35,10 +36,13 @@ export default function ResetPasswordPage() {
   );
 
   useEffect(() => {
-    if (!resetToken) {
+    // Skip once we've already reset the password: clearing the token below
+    // triggers this same check, and it must not hijack the redirect to
+    // /login with one back to /forgot-password.
+    if (!resetToken && !hasSucceeded) {
       router.replace("/forgot-password");
     }
-  }, [resetToken, router]);
+  }, [resetToken, hasSucceeded, router]);
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,6 +52,7 @@ export default function ResetPasswordPage() {
     setIsSubmitting(true);
     try {
       await resetPassword({ resetToken, newPassword: password });
+      setHasSucceeded(true);
       window.sessionStorage.removeItem(RESET_TOKEN_SESSION_KEY);
       router.push("/login");
     } catch (err) {
