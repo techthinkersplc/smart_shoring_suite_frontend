@@ -18,7 +18,7 @@ export type NavItem = {
 };
 
 export const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: DashboardIcon },
+  { label: "Dashboard", href: "/executive-dashboard", icon: DashboardIcon },
   { label: "Site Progress", href: "/site-progress", icon: SiteProgressIcon },
   { label: "Equipment", href: "/equipment", icon: EquipmentIcon },
   { label: "Daily Production", href: "/daily-production", icon: ProductionIcon },

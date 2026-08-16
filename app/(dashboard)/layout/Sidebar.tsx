@@ -45,7 +45,7 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 overflow-y-auto px-3">
         {navItems.map((item) => {
           const isActive =
-            item.href === "/dashboard"
+            item.href === "/executive-dashboard/"
               ? pathname === item.href
               : pathname.startsWith(item.href);
           const Icon = item.icon;

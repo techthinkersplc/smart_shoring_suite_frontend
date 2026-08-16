@@ -122,9 +122,11 @@ export default function VerifyOtpPage() {
               Didn&apos;t receive the code?{" "}
               <button
                 type="button"
-                className="font-medium text-amber-500 hover:text-amber-600"
+                onClick={handleResend}
+                disabled={resendCooldown > 0}
+                className="font-medium text-amber-500 hover:text-amber-600 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:text-gray-400"
               >
-                Resend
+                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend"}
               </button>
             </p>
 
