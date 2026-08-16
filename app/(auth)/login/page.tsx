@@ -1,54 +1,21 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
+import { BrandPanel } from "../_components/brand-panel";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
-  <div className="relative hidden md:block">
-    <Image
-      src="/image/Want_to_build_your_dream_business_or_investment_property.jpg"
-      alt="Construction site with blueprints"
-      fill
-      priority
-      className="object-cover"
-    />
-    
-    {/* Dark Green/Slate Overlay to match the design + Blur Effect */}
-    <div className="absolute inset-0 bg-[#2b3a32]/60 mix-blend-multiply" />
-    <div className="absolute inset-0 bg-black/20 " />
-
-    <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-12 text-center">
-      <div className="relative h-28 w-28 overflow-hidden rounded-2xl bg-[#4a5a52] shadow-2xl shadow-black/40">
-        <Image
-          src="/image/Duto.jpg"
-          alt="DUTO logo"
-          fill
-          className="object-contain p-3"
-        />
-      </div>
-
-      <div className="space-y-2">
-        {/* Added drop-shadow to text */}
-        <h1 className="text-3xl font-bold text-white drop-shadow-md">
-          Smart Shoring Suite
-        </h1>
-        <p className="max-w-sm text-sm text-white/90 drop-shadow">
-          Enterprise-grade structural safety management and equipment
-          logistics in one unified platform.
-        </p>
-      </div>
-    </div>
-  </div>
+  <BrandPanel />
 
   {/* Form Container: White on desktop, Background Image on mobile */}
   <div className="relative flex min-h-screen items-center justify-center bg-[url('/image/Want_to_build_your_dream_business_or_investment_property.jpg')] bg-cover bg-center px-6 py-12 md:min-h-full md:bg-white md:bg-none">
     
-    {/* Dark Overlay for Mobile readability */}
-    <div className="absolute inset-0 bg-black/60 md:hidden" />
+    {/* Green-to-black gradient overlay for mobile readability */}
+    <div className="absolute inset-0 bg-linear-to-b from-[#2E7D4F]/40 to-black/70 md:hidden" />
 
     <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white/95 p-8 shadow-2xl backdrop-blur-md md:rounded-none md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
       <h2 className="text-2xl font-bold text-gray-900">Login</h2>
@@ -97,12 +64,12 @@ export default function LoginPage() {
             >
               Password
             </label>
-            <a
-              href="#"
+            <Link
+              href="/forgot-password"
               className="text-sm font-medium text-amber-500 hover:text-amber-600"
             >
               Forgot password?
-            </a>
+            </Link>
           </div>
           <div className="relative">
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -181,7 +148,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-10 text-center text-xs text-gray-400">
-        © 2024 DUTO Business PLC. All rights reserved.
+        © 2026 DUTO Business PLC. All rights reserved.
       </p>
     </div>
   </div>
