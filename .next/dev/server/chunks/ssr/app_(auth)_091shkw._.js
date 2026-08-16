@@ -110,12 +110,29 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f28$auth$292f$_componen
 ;
 ;
 const OTP_LENGTH = 6;
+const RESEND_COOLDOWN_SECONDS = 30;
 function VerifyOtpPage() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const email = searchParams.get("email") ?? "";
     const [digits, setDigits] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(Array(OTP_LENGTH).fill(""));
     const inputRefs = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])([]);
+    const [resendCooldown, setResendCooldown] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(RESEND_COOLDOWN_SECONDS);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (resendCooldown === 0) return;
+        const timer = setInterval(()=>{
+            setResendCooldown((prev)=>Math.max(prev - 1, 0));
+        }, 1000);
+        return ()=>clearInterval(timer);
+    }, [
+        resendCooldown
+    ]);
+    const handleResend = ()=>{
+        if (resendCooldown > 0) return;
+        setDigits(Array(OTP_LENGTH).fill(""));
+        inputRefs.current[0]?.focus();
+        setResendCooldown(RESEND_COOLDOWN_SECONDS);
+    };
     const setDigit = (index, value)=>{
         const next = [
             ...digits
@@ -153,7 +170,7 @@ function VerifyOtpPage() {
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f28$auth$292f$_components$2f$brand$2d$panel$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["BrandPanel"], {}, void 0, false, {
                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                lineNumber: 61,
+                lineNumber: 79,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -163,7 +180,7 @@ function VerifyOtpPage() {
                         className: "absolute inset-0 bg-linear-to-b from-[#2E7D4F]/40 to-black/70 md:hidden"
                     }, void 0, false, {
                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                        lineNumber: 66,
+                        lineNumber: 84,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -174,7 +191,7 @@ function VerifyOtpPage() {
                                 children: "Verify OTP"
                             }, void 0, false, {
                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                lineNumber: 69,
+                                lineNumber: 87,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -187,14 +204,14 @@ function VerifyOtpPage() {
                                         children: email
                                     }, void 0, false, {
                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                        lineNumber: 72,
+                                        lineNumber: 90,
                                         columnNumber: 22
                                     }, this) : "your email",
                                     "."
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                lineNumber: 70,
+                                lineNumber: 88,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -218,12 +235,12 @@ function VerifyOtpPage() {
                                                 className: "h-12 w-11 rounded-lg border border-gray-300 text-center text-lg font-semibold text-gray-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                                             }, index, false, {
                                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                                lineNumber: 78,
+                                                lineNumber: 96,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                        lineNumber: 76,
+                                        lineNumber: 94,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -232,7 +249,7 @@ function VerifyOtpPage() {
                                         children: "Verify OTP"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                        lineNumber: 96,
+                                        lineNumber: 114,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -246,13 +263,13 @@ function VerifyOtpPage() {
                                                 children: "Resend"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                                lineNumber: 105,
+                                                lineNumber: 123,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                        lineNumber: 103,
+                                        lineNumber: 121,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -271,33 +288,33 @@ function VerifyOtpPage() {
                                                         d: "M19 12H5"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                                        lineNumber: 125,
+                                                        lineNumber: 143,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                         d: "M11 18l-6-6 6-6"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                                        lineNumber: 126,
+                                                        lineNumber: 144,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                                lineNumber: 117,
+                                                lineNumber: 135,
                                                 columnNumber: 15
                                             }, this),
                                             "Back"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                        lineNumber: 113,
+                                        lineNumber: 131,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                lineNumber: 75,
+                                lineNumber: 93,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -305,25 +322,25 @@ function VerifyOtpPage() {
                                 children: "© 2026 DUTO Smart Shoring Suite. All rights reserved."
                             }, void 0, false, {
                                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                                lineNumber: 132,
+                                lineNumber: 150,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                        lineNumber: 68,
+                        lineNumber: 86,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-                lineNumber: 64,
+                lineNumber: 82,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(auth)/forgot-password/verify-otp/page.tsx",
-        lineNumber: 60,
+        lineNumber: 78,
         columnNumber: 5
     }, this);
 }

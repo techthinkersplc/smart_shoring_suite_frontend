@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
+  useEffect,
   useRef,
   useState,
   type ClipboardEvent,
@@ -12,6 +13,7 @@ import {
 import { BrandPanel } from "../../_components/brand-panel";
 
 const OTP_LENGTH = 6;
+const RESEND_COOLDOWN_SECONDS = 30;
 
 export default function VerifyOtpPage() {
   const router = useRouter();
@@ -20,6 +22,22 @@ export default function VerifyOtpPage() {
 
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const [resendCooldown, setResendCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+
+  useEffect(() => {
+    if (resendCooldown === 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => Math.max(prev - 1, 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  const handleResend = () => {
+    if (resendCooldown > 0) return;
+    setDigits(Array(OTP_LENGTH).fill(""));
+    inputRefs.current[0]?.focus();
+    setResendCooldown(RESEND_COOLDOWN_SECONDS);
+  };
 
   const setDigit = (index: number, value: string) => {
     const next = [...digits];
