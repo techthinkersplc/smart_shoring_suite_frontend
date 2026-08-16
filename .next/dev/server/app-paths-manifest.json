@@ -1,8 +1,0 @@
-{
-  "/(auth)/forgot-password/page": "app/(auth)/forgot-password/page.js",
-  "/(auth)/forgot-password/reset-password/page": "app/(auth)/forgot-password/reset-password/page.js",
-  "/(auth)/forgot-password/verify-otp/page": "app/(auth)/forgot-password/verify-otp/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js"
-}

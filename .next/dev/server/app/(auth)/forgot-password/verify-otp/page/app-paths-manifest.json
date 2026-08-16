@@ -1,3 +1,0 @@
-{
-  "/(auth)/forgot-password/verify-otp/page": "app/(auth)/forgot-password/verify-otp/page.js"
-}
