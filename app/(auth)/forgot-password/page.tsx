@@ -4,14 +4,27 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
 import { BrandPanel } from "../_components/brand-panel";
+import { forgotPassword } from "@/app/(dashboard)/hooks/useAuth";
+import { handleApiError } from "@/app/(dashboard)/errors/handleApiError";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push(`/forgot-password/verify-otp?email=${encodeURIComponent(email)}`);
+    setError("");
+    setIsSubmitting(true);
+    try {
+      await forgotPassword({ email });
+      router.push(`/forgot-password/verify-otp?email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      setError(handleApiError(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,6 +46,11 @@ export default function ForgotPasswordPage() {
           </p>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {error}
+              </p>
+            )}
             <div>
               <label
                 htmlFor="email"
@@ -69,9 +87,10 @@ export default function ForgotPasswordPage() {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900"
+              disabled={isSubmitting}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Send OTP
+              {isSubmitting ? "Sending..." : "Send OTP"}
             </button>
 
             <Link

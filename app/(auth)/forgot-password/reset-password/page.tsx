@@ -2,8 +2,23 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, useSyncExternalStore, type SubmitEvent } from "react";
 import { BrandPanel } from "../../_components/brand-panel";
+import { resetPassword } from "@/app/(dashboard)/hooks/useAuth";
+import { handleApiError } from "@/app/(dashboard)/errors/handleApiError";
+import { RESET_TOKEN_SESSION_KEY } from "@/app/(dashboard)/constant";
+
+function subscribeToResetToken() {
+  return () => {};
+}
+
+function getResetTokenSnapshot() {
+  return window.sessionStorage.getItem(RESET_TOKEN_SESSION_KEY);
+}
+
+function getResetTokenServerSnapshot() {
+  return null;
+}
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -11,11 +26,35 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const resetToken = useSyncExternalStore(
+    subscribeToResetToken,
+    getResetTokenSnapshot,
+    getResetTokenServerSnapshot,
+  );
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!resetToken) {
+      router.replace("/forgot-password");
+    }
+  }, [resetToken, router]);
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== confirmPassword) return;
-    router.push("/login");
+    if (password !== confirmPassword || !resetToken) return;
+
+    setError("");
+    setIsSubmitting(true);
+    try {
+      await resetPassword({ resetToken, newPassword: password });
+      window.sessionStorage.removeItem(RESET_TOKEN_SESSION_KEY);
+      router.push("/login");
+    } catch (err) {
+      setError(handleApiError(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,6 +73,11 @@ export default function ResetPasswordPage() {
           </p>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {error}
+              </p>
+            )}
             <div>
               <label
                 htmlFor="password"
@@ -175,9 +219,10 @@ export default function ResetPasswordPage() {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900"
+              disabled={isSubmitting || !resetToken}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Reset Password
+              {isSubmitting ? "Resetting..." : "Reset Password"}
             </button>
 
             <Link

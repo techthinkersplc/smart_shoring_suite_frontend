@@ -11,6 +11,9 @@ import {
   type SubmitEvent,
 } from "react";
 import { BrandPanel } from "../../_components/brand-panel";
+import { forgotPassword, verifyOtp } from "@/app/(dashboard)/hooks/useAuth";
+import { handleApiError } from "@/app/(dashboard)/errors/handleApiError";
+import { RESET_TOKEN_SESSION_KEY } from "@/app/(dashboard)/constant";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 30;
@@ -23,6 +26,8 @@ export default function VerifyOtpPage() {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const [resendCooldown, setResendCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (resendCooldown === 0) return;
@@ -32,8 +37,15 @@ export default function VerifyOtpPage() {
     return () => clearInterval(timer);
   }, [resendCooldown]);
 
-  const handleResend = () => {
-    if (resendCooldown > 0) return;
+  const handleResend = async () => {
+    if (resendCooldown > 0 || !email) return;
+    setError("");
+    try {
+      await forgotPassword({ email });
+    } catch (err) {
+      setError(handleApiError(err));
+      return;
+    }
     setDigits(Array(OTP_LENGTH).fill(""));
     inputRefs.current[0]?.focus();
     setResendCooldown(RESEND_COOLDOWN_SECONDS);
@@ -69,9 +81,25 @@ export default function VerifyOtpPage() {
     inputRefs.current[Math.min(pasted.length, OTP_LENGTH - 1)]?.focus();
   };
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push(`/forgot-password/reset-password?email=${encodeURIComponent(email)}`);
+    const otp = digits.join("");
+    if (otp.length !== OTP_LENGTH) {
+      setError("Enter the full 6-digit code.");
+      return;
+    }
+
+    setError("");
+    setIsSubmitting(true);
+    try {
+      const { resetToken } = await verifyOtp({ email, otp });
+      window.sessionStorage.setItem(RESET_TOKEN_SESSION_KEY, resetToken);
+      router.push(`/forgot-password/reset-password?email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      setError(handleApiError(err));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -91,6 +119,11 @@ export default function VerifyOtpPage() {
           </p>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {error}
+              </p>
+            )}
             <div className="flex justify-between gap-2">
               {digits.map((digit, index) => (
                 <input
@@ -113,9 +146,10 @@ export default function VerifyOtpPage() {
 
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900"
+              disabled={isSubmitting}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Verify OTP
+              {isSubmitting ? "Verifying..." : "Verify OTP"}
             </button>
 
             <p className="text-center text-sm text-gray-500">

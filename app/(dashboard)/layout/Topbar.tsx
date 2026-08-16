@@ -1,7 +1,13 @@
+"use client";
+
 import { BellIcon, SearchIcon, UserIcon } from "@/app/common/components/ui/Icons";
 import { PageTitle } from "@/app/common/components/ui/PageTitle";
+import { useAuth } from "@/app/(dashboard)/hooks/useAuth";
+import { ROLE_LABELS } from "@/app/(dashboard)/constant";
 
 export function Topbar() {
+  const { user } = useAuth();
+
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-4">
       <PageTitle />
@@ -29,9 +35,11 @@ export function Topbar() {
 
         <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
           <div className="text-right leading-tight">
-            <p className="text-sm font-semibold text-gray-900">User Name</p>
+            <p className="text-sm font-semibold text-gray-900">
+              {user?.name ?? "..."}
+            </p>
             <p className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
-              Chief Engineer
+              {user ? ROLE_LABELS[user.role] : ""}
             </p>
           </div>
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-800 text-white">

@@ -1,11 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, type SubmitEvent } from "react";
 import { BrandPanel } from "../_components/brand-panel";
+import { useAuth } from "@/app/(dashboard)/hooks/useAuth";
+import { DEFAULT_AUTHENTICATED_ROUTE } from "@/app/(dashboard)/constant";
+import { handleApiError } from "@/app/(dashboard)/errors/handleApiError";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+    try {
+      await login({ email, password });
+      router.push(DEFAULT_AUTHENTICATED_ROUTE);
+    } catch (err) {
+      setError(handleApiError(err));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
@@ -23,13 +47,18 @@ export default function LoginPage() {
         Welcome back! Please enter your details.
       </p>
 
-      <form className="mt-8 space-y-5">
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        {error && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            {error}
+          </p>
+        )}
         <div>
           <label
             htmlFor="identifier"
             className="mb-1.5 block text-sm font-medium text-gray-700"
           >
-            Email or Username
+            Email
           </label>
           <div className="relative">
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -49,7 +78,10 @@ export default function LoginPage() {
             <input
               id="identifier"
               name="identifier"
-              type="text"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             />
@@ -89,6 +121,10 @@ export default function LoginPage() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
+              required
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
             />
@@ -130,9 +166,10 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900"
+          disabled={isSubmitting}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-800 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Login
+          {isSubmitting ? "Logging in..." : "Login"}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"

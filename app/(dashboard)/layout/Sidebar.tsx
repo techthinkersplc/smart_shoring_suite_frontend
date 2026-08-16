@@ -2,14 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogoutIcon, MenuIcon, SupportIcon } from "@/app/common/components/ui/Icons";
 import { navItems } from "@/app/common/components/ui/NavItems";
+import { useAuth } from "@/app/(dashboard)/hooks/useAuth";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
 
   return (
     <aside
@@ -79,16 +87,17 @@ export function Sidebar() {
           <SupportIcon className="h-5 w-5 shrink-0" />
           {!collapsed && <span>Support</span>}
         </Link>
-        <Link
-          href="/login"
+        <button
+          type="button"
+          onClick={handleLogout}
           title={collapsed ? "Logout" : undefined}
-          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 ${
+          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 ${
             collapsed ? "justify-center" : ""
           }`}
         >
           <LogoutIcon className="h-5 w-5 shrink-0" />
           {!collapsed && <span>Logout</span>}
-        </Link>
+        </button>
       </div>
     </aside>
   );
