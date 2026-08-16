@@ -148,4 +148,32 @@ export const MOCK_MAINTENANCE_LOG: MaintenanceLogEntry[] = [
     reportedAt: "Oct 20, 08:00 AM",
     status: "Resolved",
   },
+  {
+    id: "log-5",
+    equipmentId: "GN-07",
+    issue: "Low Coolant Level",
+    reportedAt: "Oct 19, 16:40 PM",
+    status: "Open",
+  },
+  {
+    id: "log-6",
+    equipmentId: "CR-06",
+    issue: "Cable Inspection",
+    reportedAt: "Oct 18, 10:20 AM",
+    status: "Scheduled",
+  },
+  {
+    id: "log-7",
+    equipmentId: "AC-03",
+    issue: "Air Filter Replaced",
+    reportedAt: "Oct 16, 09:00 AM",
+    status: "Resolved",
+  },
+  {
+    id: "log-8",
+    equipmentId: "EX-15",
+    issue: "Undercarriage Wear Check",
+    reportedAt: "Oct 14, 13:10 PM",
+    status: "Resolved",
+  },
 ];
