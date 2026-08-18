@@ -53,18 +53,18 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     [notifications],
   );
 
-  // Update locally right away so the UI always works, and best-effort persist
-  // to the backend — once /notifications is live this will actually stick;
-  // until then the request just fails silently and local state still holds.
+  // Read notifications are removed from the list rather than left sitting
+  // there grayed out. Update locally right away so the UI always works, and
+  // best-effort persist to the backend — once /notifications is live this
+  // will actually stick; until then the request just fails silently and
+  // local state still holds.
   const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
-    );
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
     markNotificationRead(id).catch(() => {});
   };
 
   const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    setNotifications([]);
     markAllNotificationsRead().catch(() => {});
   };
 

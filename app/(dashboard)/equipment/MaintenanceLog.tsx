@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MOCK_MAINTENANCE_LOG } from "./mockData";
+import { useEquipmentData } from "./context";
 import type { MaintenanceLogEntry, MaintenanceLogStatus } from "./types";
 
 const STATUS_BADGE: Record<MaintenanceLogStatus, string> = {
   Open: "bg-red-50 text-red-600",
+  "In Progress": "bg-amber-50 text-amber-700",
   Scheduled: "bg-amber-50 text-amber-700",
-  Resolved: "bg-emerald-50 text-emerald-700",
+  Resolved: "bg-brand-green/10 text-brand-green",
 };
 
 const PREVIEW_COUNT = 4;
@@ -26,9 +27,14 @@ function MaintenanceLogTable({ entries }: { entries: MaintenanceLogEntry[] }) {
       <tbody>
         {entries.map((entry) => (
           <tr key={entry.id} className="border-b border-gray-100 text-gray-900">
-            <td className="py-2.5 pr-4 font-semibold">{entry.equipmentId}</td>
+            <td className="py-2.5 pr-4 font-semibold">{entry.equipmentCode}</td>
             <td className="py-2.5 pr-4 text-gray-600">{entry.issue}</td>
-            <td className="py-2.5 pr-4 text-gray-600">{entry.reportedAt}</td>
+            <td className="py-2.5 pr-4 text-gray-600">
+              {new Date(entry.reportedAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "2-digit",
+              })}
+            </td>
             <td className="py-2.5 pr-4">
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[entry.status]}`}
@@ -44,8 +50,10 @@ function MaintenanceLogTable({ entries }: { entries: MaintenanceLogEntry[] }) {
 }
 
 export function MaintenanceLog() {
+  const { maintenanceLog } = useEquipmentData();
   const [isViewAllOpen, setIsViewAllOpen] = useState(false);
-  const previewEntries = MOCK_MAINTENANCE_LOG.slice(0, PREVIEW_COUNT);
+  const entries = maintenanceLog ?? [];
+  const previewEntries = entries.slice(0, PREVIEW_COUNT);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5">
@@ -53,17 +61,25 @@ export function MaintenanceLog() {
         <h2 className="flex items-center gap-1.5 text-base font-bold text-gray-900">
           🔧 Breakdown &amp; Maintenance Log
         </h2>
-        <button
-          type="button"
-          onClick={() => setIsViewAllOpen(true)}
-          className="text-sm font-medium text-emerald-700 hover:text-emerald-800"
-        >
-          View All
-        </button>
+        {entries.length > PREVIEW_COUNT && (
+          <button
+            type="button"
+            onClick={() => setIsViewAllOpen(true)}
+            className="text-sm font-medium text-brand-green hover:opacity-80"
+          >
+            View All
+          </button>
+        )}
       </div>
 
       <div className="mt-4 overflow-x-auto">
-        <MaintenanceLogTable entries={previewEntries} />
+        {maintenanceLog === null ? (
+          <p className="text-sm text-gray-500">Loading...</p>
+        ) : entries.length === 0 ? (
+          <p className="text-sm text-gray-500">No breakdowns or maintenance reported.</p>
+        ) : (
+          <MaintenanceLogTable entries={previewEntries} />
+        )}
       </div>
 
       {isViewAllOpen && (
@@ -84,7 +100,7 @@ export function MaintenanceLog() {
             </div>
 
             <div className="mt-4 overflow-x-auto">
-              <MaintenanceLogTable entries={MOCK_MAINTENANCE_LOG} />
+              <MaintenanceLogTable entries={entries} />
             </div>
           </div>
         </div>

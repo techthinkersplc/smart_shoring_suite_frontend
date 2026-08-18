@@ -1,3 +1,9 @@
+"use client";
+
+import { useState } from "react";
+import { useAuth } from "@/app/(dashboard)/hooks/useAuth";
+import { UserRole } from "@/app/(dashboard)/constant";
+import { EquipmentActionModal } from "./EquipmentActionModal";
 import type { Equipment, EquipmentStatus } from "./types";
 
 const STATUS_BADGE: Record<EquipmentStatus, string> = {
@@ -14,103 +20,86 @@ const STATUS_LABEL: Record<EquipmentStatus, string> = {
   MAINTENANCE: "Maintenance",
 };
 
-function fuelSeverity(percent: number) {
-  if (percent >= 50) return { fill: "bg-emerald-500", track: "bg-emerald-100" };
-  if (percent >= 20) return { fill: "bg-amber-400", track: "bg-amber-100" };
-  return { fill: "bg-red-500", track: "bg-red-100" };
-}
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
+// Mirrors equipment.routes.ts's canManage / breakdown role gates exactly, so
+// these buttons only show for roles the backend would actually let through.
+const CAN_SCHEDULE_MAINTENANCE = [
+  UserRole.ADMIN,
+  UserRole.PROJECT_MANAGER,
+  UserRole.SITE_ENGINEER,
+];
+const CAN_REPORT_BREAKDOWN = [
+  UserRole.ADMIN,
+  UserRole.PROJECT_MANAGER,
+  UserRole.SITE_ENGINEER,
+  UserRole.SAFETY_OFFICER,
+];
 
 export function FleetCard({ equipment }: { equipment: Equipment }) {
-  const fuel = equipment.fuelLevelPercent ?? 0;
-  const severity = fuelSeverity(fuel);
+  const { user } = useAuth();
+  const [action, setAction] = useState<"maintenance" | "breakdown" | null>(null);
+
+  const canScheduleMaintenance = !!user && CAN_SCHEDULE_MAINTENANCE.includes(user.role);
+  const canReportBreakdown = !!user && CAN_REPORT_BREAKDOWN.includes(user.role);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="font-bold text-gray-900">
-            {equipment.name} – {equipment.equipmentId}
+            {equipment.equipmentType.name} – {equipment.equipmentCode}
           </h3>
-          <p className="text-sm text-gray-500">{equipment.model}</p>
+          <p className="text-sm text-gray-500">
+            {equipment.manufacturer} {equipment.model}
+          </p>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
-          {equipment.maintenanceDueInDays !== undefined && (
-            <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
-              ⚠ Maint Due ({equipment.maintenanceDueInDays}d)
-            </span>
-          )}
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_BADGE[equipment.status]}`}
-          >
-            {STATUS_LABEL[equipment.status]}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <div className="flex items-center justify-between text-xs font-medium text-gray-500">
-          <span>Fuel Level</span>
-          <span className="text-gray-900">{fuel}%</span>
-        </div>
-        <div className={`mt-1.5 h-1.5 w-full overflow-hidden rounded-full ${severity.track}`}>
-          <div
-            className={`h-full rounded-full ${severity.fill}`}
-            style={{ width: `${fuel}%` }}
-          />
-        </div>
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_BADGE[equipment.status]}`}
+        >
+          {STATUS_LABEL[equipment.status]}
+        </span>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2 border-t border-gray-100 pt-4">
         <div>
-          <p className="text-xs font-medium text-gray-500">Engine Hours</p>
-          <p className="text-sm font-bold text-gray-900">
-            {equipment.engineHours !== undefined ? `${equipment.engineHours} hrs` : "—"}
-          </p>
+          <p className="text-xs font-medium text-gray-500">Year</p>
+          <p className="text-sm font-bold text-gray-900">{equipment.year}</p>
         </div>
         <div>
-          <p className="text-xs font-medium text-gray-500">Idle Hours</p>
-          <p className="text-sm font-bold text-gray-900">
-            {equipment.idleHours !== undefined ? `${equipment.idleHours} hrs` : "—"}
-          </p>
+          <p className="text-xs font-medium text-gray-500">Serial Number</p>
+          <p className="truncate text-sm font-bold text-gray-900">{equipment.serialNumber}</p>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-2 border-t border-gray-100 pt-4">
-        {equipment.assignedTo ? (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-800 text-xs font-semibold text-white">
-            {initials(equipment.assignedTo)}
-          </div>
-        ) : (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              className="h-4 w-4"
+      {(canScheduleMaintenance || canReportBreakdown) && (
+        <div className="mt-4 flex gap-2 border-t border-gray-100 pt-4">
+          {canScheduleMaintenance && (
+            <button
+              type="button"
+              onClick={() => setAction("maintenance")}
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
             >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
-            </svg>
-          </div>
-        )}
-        <div className="min-w-0 text-sm">
-          <p className="truncate font-medium text-gray-900">
-            {equipment.assignedTo ?? "Unassigned"}
-          </p>
-          <p className="truncate text-xs text-gray-500">{equipment.location ?? "No location set"}</p>
+              Schedule Maintenance
+            </button>
+          )}
+          {canReportBreakdown && (
+            <button
+              type="button"
+              onClick={() => setAction("breakdown")}
+              className="flex-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+            >
+              Report Breakdown
+            </button>
+          )}
         </div>
-      </div>
+      )}
+
+      {action && (
+        <EquipmentActionModal
+          equipment={equipment}
+          mode={action}
+          onClose={() => setAction(null)}
+        />
+      )}
     </div>
   );
 }

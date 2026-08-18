@@ -28,40 +28,47 @@ function NotificationRow({
   notification: Notification;
   onRead: (id: string) => void;
 }) {
-  const content = (
+  return (
     <div
-      className={`flex items-start gap-2.5 px-4 py-3 text-left hover:bg-gray-50 ${
+      className={`flex items-start gap-2.5 px-4 py-3 hover:bg-gray-50 ${
         notification.isRead ? "" : "bg-brand-green/5"
       }`}
     >
       <span
         className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${SEVERITY_DOT[notification.severity]}`}
       />
-      <div className="min-w-0 flex-1">
+      {/* Clicking the body only marks it read — it must not also navigate,
+          or the dropdown unmounts before you can see the read state change. */}
+      <button
+        type="button"
+        onClick={() => onRead(notification.id)}
+        disabled={notification.isRead}
+        className="min-w-0 flex-1 text-left disabled:cursor-default"
+      >
         <p className="text-sm font-semibold text-gray-900">{notification.title}</p>
         <p className="mt-0.5 text-xs text-gray-500">{notification.message}</p>
-        <p className="mt-1 text-[11px] font-medium text-gray-400">
-          {relativeTime(notification.createdAt)}
-        </p>
-      </div>
+        <div className="mt-1 flex items-center gap-2">
+          <p className="text-[11px] font-medium text-gray-400">
+            {relativeTime(notification.createdAt)}
+          </p>
+          {notification.href && (
+            <Link
+              href={notification.href}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRead(notification.id);
+              }}
+              className="text-[11px] font-semibold text-brand-green hover:underline"
+            >
+              View →
+            </Link>
+          )}
+        </div>
+      </button>
       {!notification.isRead && (
         <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green" />
       )}
     </div>
-  );
-
-  if (notification.href) {
-    return (
-      <Link href={notification.href} onClick={() => onRead(notification.id)}>
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <button type="button" onClick={() => onRead(notification.id)} className="block w-full">
-      {content}
-    </button>
   );
 }
 
