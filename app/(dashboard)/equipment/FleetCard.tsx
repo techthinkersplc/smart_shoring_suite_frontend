@@ -72,11 +72,15 @@ export function FleetCard({ equipment }: { equipment: Equipment }) {
       <div className="mt-4 grid grid-cols-2 gap-2 border-t border-gray-100 pt-4">
         <div>
           <p className="text-xs font-medium text-gray-500">Engine Hours</p>
-          <p className="text-sm font-bold text-gray-900">{equipment.engineHours} hrs</p>
+          <p className="text-sm font-bold text-gray-900">
+            {equipment.engineHours !== undefined ? `${equipment.engineHours} hrs` : "—"}
+          </p>
         </div>
         <div>
           <p className="text-xs font-medium text-gray-500">Idle Hours</p>
-          <p className="text-sm font-bold text-gray-900">{equipment.idleHours} hrs</p>
+          <p className="text-sm font-bold text-gray-900">
+            {equipment.idleHours !== undefined ? `${equipment.idleHours} hrs` : "—"}
+          </p>
         </div>
       </div>
 
@@ -104,7 +108,7 @@ export function FleetCard({ equipment }: { equipment: Equipment }) {
           <p className="truncate font-medium text-gray-900">
             {equipment.assignedTo ?? "Unassigned"}
           </p>
-          <p className="truncate text-xs text-gray-500">{equipment.location}</p>
+          <p className="truncate text-xs text-gray-500">{equipment.location ?? "No location set"}</p>
         </div>
       </div>
     </div>

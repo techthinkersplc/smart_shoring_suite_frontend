@@ -1,21 +1,26 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { BellIcon, SearchIcon, UserIcon } from "@/app/common/components/ui/Icons";
+import { SearchIcon, UserIcon } from "@/app/common/components/ui/Icons";
 import { PageTitle } from "@/app/common/components/ui/PageTitle";
 import { useAuth } from "@/app/(dashboard)/hooks/useAuth";
 import { ROLE_LABELS } from "@/app/(dashboard)/constant";
 import { EquipmentHeader } from "@/app/(dashboard)/equipment/EquipmentHeader";
+import { CostHeader } from "@/app/(dashboard)/cost/CostHeader";
+import { NotificationsBell } from "@/app/(dashboard)/notifications/NotificationsBell";
 
 export function Topbar() {
   const { user } = useAuth();
   const pathname = usePathname();
   const isEquipmentPage = pathname.startsWith("/equipment");
+  const isCostPage = pathname.startsWith("/cost");
 
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-4">
       {isEquipmentPage ? (
         <EquipmentHeader />
+      ) : isCostPage ? (
+        <CostHeader />
       ) : (
         <>
           <PageTitle />
@@ -32,16 +37,7 @@ export function Topbar() {
       )}
 
       <div className="flex items-center gap-4">
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="relative rounded-full p-2 text-gray-500 hover:bg-gray-100"
-        >
-          <BellIcon className="h-5 w-5" />
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
-            3
-          </span>
-        </button>
+        <NotificationsBell />
 
         <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
           <div className="text-right leading-tight">

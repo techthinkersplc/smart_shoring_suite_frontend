@@ -12,6 +12,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  /* Brand green (#2E7D4F) — already used in the auth pages' gradient overlay;
+     registered here so other features can reference it with normal Tailwind
+     utilities (bg-brand-green, text-brand-green, border-brand-green, ...)
+     instead of scattering the raw hex as arbitrary values. */
+  --color-brand-green: #2e7d4f;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
