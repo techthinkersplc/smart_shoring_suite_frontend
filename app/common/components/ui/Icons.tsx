@@ -166,9 +166,14 @@ export function BuildingIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <IconBase {...props}>
       <rect x="4" y="3" width="12" height="18" rx="1" />
+<<<<<<< HEAD
       <path d="M16 8h4v13h-4" />
       <path d="M7.5 7h1M11.5 7h1M7.5 11h1M11.5 11h1M7.5 15h1M11.5 15h1" />
       <path d="M9 21v-4h2v4" />
+=======
+      <path d="M16 21h4V10l-4-3" />
+      <path d="M8 7h.01M12 7h.01M8 11h.01M12 11h.01M8 15h.01M12 15h.01" />
+>>>>>>> 934f73960f6d0efe61956c65e9e666207098d6c7
     </IconBase>
   );
 }
@@ -176,8 +181,13 @@ export function BuildingIcon(props: SVGProps<SVGSVGElement>) {
 export function LockIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <IconBase {...props}>
+<<<<<<< HEAD
       <rect x="4" y="11" width="16" height="10" rx="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+=======
+      <rect x="4" y="11" width="16" height="9" rx="2" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+>>>>>>> 934f73960f6d0efe61956c65e9e666207098d6c7
     </IconBase>
   );
 }

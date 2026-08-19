@@ -18,6 +18,11 @@
      utilities (bg-brand-green, text-brand-green, border-brand-green, ...)
      instead of scattering the raw hex as arbitrary values. */
   --color-brand-green: #2e7d4f;
+
+  /* Shared dashboard surface background (#EEF1F4) — used by the page shell
+     and any panel that should match it, instead of repeating the raw hex or
+     drifting to a nearby Tailwind gray. */
+  --color-surface: #eef1f4;
 }
 
 @media (prefers-color-scheme: dark) {

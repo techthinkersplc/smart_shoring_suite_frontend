@@ -16,6 +16,7 @@ import {
 } from "@/app/(dashboard)/constant";
 import type {
   AuthUser,
+  ChangePasswordPayload,
   CreateUserPayload,
   ForgotPasswordPayload,
   LoginPayload,
@@ -23,6 +24,7 @@ import type {
   ManagedUser,
   MessageResponse,
   ResetPasswordPayload,
+  UpdateProfilePayload,
   VerifyOtpPayload,
   VerifyOtpResponse,
 } from "@/app/(dashboard)/types";
@@ -33,6 +35,9 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   login: (payload: LoginPayload) => Promise<AuthUser>;
   logout: () => void;
+  // Lets a successful profile edit (PATCH /users/me) refresh the cached user
+  // everywhere it's shown (Topbar, Sidebar) without a full session reload.
+  updateUser: (user: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -89,9 +94,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((updated: AuthUser) => {
+    window.localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(updated));
+    setUser(updated);
+  }, []);
+
   const value = useMemo(
-    () => ({ user, isLoading, isAuthenticated: user !== null, login, logout }),
-    [user, isLoading, login, logout],
+    () => ({ user, isLoading, isAuthenticated: user !== null, login, logout, updateUser }),
+    [user, isLoading, login, logout, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -144,5 +154,24 @@ export async function createUser(
 
 export async function listUsers(): Promise<ManagedUser[]> {
   const response = await api.get<ManagedUser[]>("/users");
+  return response.data;
+}
+
+// Self-service profile & password (Profile-Password-API.pdf) — any
+// authenticated role may call these for their own account.
+export async function getMyProfile(): Promise<AuthUser> {
+  const response = await api.get<AuthUser>("/users/me");
+  return response.data;
+}
+
+export async function updateMyProfile(payload: UpdateProfilePayload): Promise<AuthUser> {
+  const response = await api.patch<AuthUser>("/users/me", payload);
+  return response.data;
+}
+
+export async function changePassword(
+  payload: ChangePasswordPayload,
+): Promise<MessageResponse> {
+  const response = await api.post<MessageResponse>("/auth/change-password", payload);
   return response.data;
 }
