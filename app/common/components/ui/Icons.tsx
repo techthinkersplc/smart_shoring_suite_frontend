@@ -161,3 +161,32 @@ export function LogoutIcon(props: SVGProps<SVGSVGElement>) {
     </IconBase>
   );
 }
+
+export function BuildingIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <IconBase {...props}>
+      <rect x="4" y="3" width="12" height="18" rx="1" />
+      <path d="M16 21h4V10l-4-3" />
+      <path d="M8 7h.01M12 7h.01M8 11h.01M12 11h.01M8 15h.01M12 15h.01" />
+    </IconBase>
+  );
+}
+
+export function LockIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <IconBase {...props}>
+      <rect x="4" y="11" width="16" height="9" rx="2" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </IconBase>
+  );
+}
+
+export function InfoIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <IconBase {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" />
+      <circle cx="12" cy="8" r="0.6" fill="currentColor" stroke="none" />
+    </IconBase>
+  );
+}

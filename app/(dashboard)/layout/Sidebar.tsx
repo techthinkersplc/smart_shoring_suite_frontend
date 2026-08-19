@@ -1,18 +1,25 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogoutIcon, MenuIcon, SupportIcon } from "@/app/common/components/ui/Icons";
 import { navItems } from "@/app/common/components/ui/NavItems";
 import { useAuth } from "@/app/(dashboard)/hooks/useAuth";
+import { ORGANIZATION_LOGO_ORIGIN } from "@/app/(dashboard)/settings/api";
+import { useOrganizationProfile } from "@/app/(dashboard)/settings/context";
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const { profile } = useOrganizationProfile();
   const [collapsed, setCollapsed] = useState(false);
+
+  const logoSrc = profile?.logoUrl
+    ? `${ORGANIZATION_LOGO_ORIGIN}${profile.logoUrl}`
+    : "/image/Duto.jpg";
+  const companyName = profile?.companyName?.trim() || "DSSS";
 
   const handleLogout = () => {
     logout();
@@ -38,11 +45,12 @@ export function Sidebar() {
 
       <div className="flex flex-col items-center px-4 pb-6 pt-3 text-center mb-2.5">
         <div className="relative h-15 w-15 overflow-hidden rounded-xl">
-          <Image src="/image/Duto.jpg" alt="DUTO logo" fill className="object-contain p-1.5" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={logoSrc} alt={`${companyName} logo`} className="h-full w-full object-contain p-1.5" />
         </div>
         {!collapsed && (
           <>
-            <p className="mt-2 text-lg font-bold tracking-tight text-gray-900">DSSS</p>
+            <p className="mt-2 text-lg font-bold tracking-tight text-gray-900">{companyName}</p>
             <p className="text-[10px] font-medium tracking-widest text-gray-400">
               DUTO SMART SHORING SUITE
             </p>
