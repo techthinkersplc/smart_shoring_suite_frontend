@@ -114,7 +114,7 @@ export function CompanyTab() {
     <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 bg-white p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Organization Profile</h2>
+          <h2 className="text-lg font-bold text-gray-900">Campony Profile</h2>
           <p className="mt-1 text-sm text-gray-500">
             Manage your organization&apos;s profile, registration details, and brand assets.
           </p>
@@ -139,8 +139,11 @@ export function CompanyTab() {
           {saveMessage}
         </p>
       )}
-
+   <br></br>
+    <h2 className="text-lg font-bold text-gray-900">Organization Profile</h2>
+   
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        
         <div>
           <label htmlFor="companyName" className={labelClass}>
             Company Name
@@ -241,6 +244,7 @@ export function CompanyTab() {
               disabled={!isAdmin}
               value={form.primaryEmail}
               onChange={updateField("primaryEmail")}
+              placeholder="info@duto-shoring.com"
               className={inputClass}
             />
           </div>
@@ -253,6 +257,7 @@ export function CompanyTab() {
               disabled={!isAdmin}
               value={form.phoneNumber}
               onChange={updateField("phoneNumber")}
+              placeholder="+251 11 661 2345"
               className={inputClass}
             />
           </div>
@@ -266,6 +271,7 @@ export function CompanyTab() {
             disabled={!isAdmin}
             value={form.website}
             onChange={updateField("website")}
+            placeholder="www.duto-shoring.com"
             className={inputClass}
           />
         </div>
@@ -282,6 +288,7 @@ export function CompanyTab() {
             disabled={!isAdmin}
             value={form.streetAddress}
             onChange={updateField("streetAddress")}
+            placeholder="Bole Road, Building 45, Office 302"
             className={inputClass}
           />
         </div>
@@ -295,6 +302,7 @@ export function CompanyTab() {
               disabled={!isAdmin}
               value={form.city}
               onChange={updateField("city")}
+              placeholder="Addis Ababa"
               className={inputClass}
             />
           </div>
@@ -307,6 +315,7 @@ export function CompanyTab() {
               disabled={!isAdmin}
               value={form.region}
               onChange={updateField("region")}
+              placeholder="Addis Ababa"
               className={inputClass}
             />
           </div>
@@ -320,6 +329,7 @@ export function CompanyTab() {
             disabled={!isAdmin}
             value={form.country}
             onChange={updateField("country")}
+            placeholder="Ethiopia"
             className={inputClass}
           />
         </div>
